@@ -1,0 +1,951 @@
+terraform {
+  backend "azurerm" {}
+  required_version = ">= 0.13.3"
+
+  required_providers {
+    azurerm = "2.99.0"
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "group" {
+  name     = var.resource_group_name
+  location = var.location
+}
+
+data "azurerm_subnet" "subnet" {
+  count                = var.subnet_name == "" ? 0 : 1
+  name                 = var.subnet_name
+  virtual_network_name = var.virtual_network_name
+  resource_group_name  = var.virtual_network_resource_group_name
+}
+
+resource "azurerm_eventhub_namespace" "exponea_eventhub" {
+  name                     = "${var.prefix}-${var.instance}-eventhub"
+  location                 = azurerm_resource_group.group.location
+  resource_group_name      = azurerm_resource_group.group.name
+  sku                      = var.eventhub_sku
+  capacity                 = var.eventhub_capacity
+  maximum_throughput_units = var.eventhub_max_capacity
+  auto_inflate_enabled     = var.eventhub_auto_inflate
+
+  dynamic "network_rulesets" {
+    for_each = var.subnet_name != "" ? [1] : [1]
+    content {
+      default_action                 = var.subnet_name != "" ? "Deny" : "Allow"
+      trusted_service_access_enabled = var.subnet_name != ""
+      dynamic "virtual_network_rule" {
+        for_each = toset(var.subnet_name != "" ? [1] : [])
+        content {
+          subnet_id = data.azurerm_subnet.subnet[0].id
+        }
+      }
+    }
+  }
+}
+
+resource "azurerm_eventhub" "eventhub_exponea_event" {
+  name                = "event"
+  namespace_name      = azurerm_eventhub_namespace.exponea_eventhub.name
+  resource_group_name = azurerm_resource_group.group.name
+  partition_count     = var.eventhub_exponea_event_partition_count
+  message_retention   = var.eventhub_exponea_event_message_retention
+}
+
+resource "azurerm_eventhub" "eventhub_exponea_customerupdate" {
+  name                = "customerUpdate"
+  namespace_name      = azurerm_eventhub_namespace.exponea_eventhub.name
+  resource_group_name = azurerm_resource_group.group.name
+  partition_count     = var.eventhub_exponea_customerupdate_partition_count
+  message_retention   = var.eventhub_exponea_customerupdate_message_retention
+}
+
+locals {
+  eventgrid_principal_ids_map = {
+    "user_principal_id"        = "${var.eventgrid_user_topic_resource_group_name != "" && var.subnet_name != "" ? data.external.user_principal_id.0.result["principalId"] : null}"
+    "user_pi_principal_id"     = "${var.eventgrid_pi_user_topic_resource_group_name != "" && var.subnet_name != "" ? data.external.user_pi_principal_id.0.result["principalId"] : null}"
+    
+  }
+
+  eventgrid_principal_ids = {
+    for eventgrid_name, eventgrid_principal_id in local.eventgrid_principal_ids_map :
+    eventgrid_name => eventgrid_principal_id if eventgrid_principal_id != null
+  }
+}
+
+resource "azurerm_eventgrid_event_subscription" "customerupdate_user_pi" {
+  count = var.eventgrid_pi_user_topic_resource_group_name == "" ? 0 : 1
+  name  = "customerupdate-user-pi"
+  scope = element(data.azurerm_eventgrid_topic.user_pi.*.id, count.index)
+
+  eventhub_endpoint {
+    eventhub_id = azurerm_eventhub.eventhub_exponea_customerupdate.id
+  }
+
+  dynamic "delivery_identity" {
+    for_each = local.eventgrid_principal_ids_map["user_pi_principal_id"] == null ? [] : [1]
+    content {
+      type = "SystemAssigned"
+    }
+  }
+}
+resource "azurerm_application_insights" "insights" {
+  name                = "${var.prefix}-${var.instance}-insights"
+  location            = var.app_insights_location
+  resource_group_name = azurerm_resource_group.group.name
+  application_type    = "web" // Should be in lower case for provider version >1.43
+}
+
+resource "azurerm_storage_account" "storage" {
+  name                     = "${replace(var.prefix, "-", "")}${var.instance}storage"
+  resource_group_name      = azurerm_resource_group.group.name
+  location                 = var.location
+  account_tier             = var.storage_tier
+  account_replication_type = var.storage_replication_type
+}
+
+resource "azurerm_storage_queue" "queue" {
+  name                 = var.error_queue_name
+  storage_account_name = azurerm_storage_account.storage.name
+}
+
+resource "azurerm_app_service_plan" "plan" {
+  count                        = var.app_service_plan_id == "" ? 1 : 0
+  name                         = "${var.prefix}-${var.instance}-asp"
+  location                     = var.location
+  resource_group_name          = azurerm_resource_group.group.name
+  kind                         = var.app_service_plan_kind
+  maximum_elastic_worker_count = var.app_service_plan_max_elastic_worker_count
+
+  sku {
+    tier     = var.app_service_plan_tier
+    size     = var.app_service_plan_size
+    capacity = var.app_service_plan_capacity
+  }
+}
+
+resource "azurerm_template_deployment" "functions" {
+  name                = "functions-deployment"
+  resource_group_name = azurerm_resource_group.group.name
+
+  template_body = <<DEPLOY
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "isNew": {
+      "type": "string",
+      "allowedValues": [
+        "true",
+        "false"
+      ]
+    },
+    "functionAppName": {
+      "type": "string"
+    },
+    "applicationInsightsInstrumentationKey": {
+      "type": "string"
+    },
+    "hostingPlanId": {
+      "type": "string"
+    },
+    "storageAccountConnectionString": {
+      "type": "securestring"
+    },
+    "location": {
+      "type": "string"
+    },
+    "exponeaBaseUrl": {
+      "type": "string"
+    },
+    "exponeaUsername": {
+      "type": "securestring"
+    },
+    "exponeaPasswordSecretName": {
+      "type": "securestring"
+    },
+    "exponeaProjectId": {
+      "type": "securestring"
+    },
+    "exponeaApiVersion": {
+      "type": "string"
+    },
+    "exponeaCareProviderCatalogueId": {
+      "type" : "securestring"
+    },
+    "exponeaServiceCatalogueId":{
+      "type" : "securestring"
+    },
+     "exponeaArticleCatalogueId":{
+      "type" : "securestring"
+    },
+    "serviceBusConnectionString":{
+      "type" : "securestring"
+    },
+    "eventHubConnectionString": {
+      "type": "securestring"
+    },
+    "customerEventHubName": {
+      "type": "string"
+    },
+    "eventEventHubName": {
+      "type": "string"
+    },
+    "iamUrl": {
+      "type": "string"
+    },
+    "disableTestFunctions": {
+      "type": "string",
+      "allowedValues": [
+        "true",
+        "false"
+      ]
+    },
+    "maxBatchSize": {
+      "type": "string"
+    },
+    "ssoTokenUrl": {
+      "type": "string"
+    },
+    "ssoClientId": {
+      "type": "string"
+    },
+    "ssoClientSecret": {
+      "type": "securestring"
+    },
+    "ssoScope": {
+      "type": "string"
+    },
+    "errorQueueName": {
+      "type": "string"
+    },
+    "retryDelay1": {
+      "type": "string"
+    },
+    "retryDelay2": {
+      "type": "string"
+    },
+    "retryDelay3": {
+      "type": "string"
+    },
+    "directoryBaseUrl": {
+      "type": "string"
+    },
+    "directoryProfile": {
+      "type": "string"
+    },
+    "directoryView": {
+      "type": "string"
+    },
+    "directoryCareProviderEndpoint": {
+      "type": "string"
+    },
+    "directoryServiceEndpoint": {
+      "type": "string"
+    }, 
+    "directoryTopic": {
+      "type": "string"
+    } ,
+    "directoryCareProviderUpdateSubscription": {
+      "type": "string"
+    } ,
+    "directoryServiceUpdateSubscription": {
+      "type": "string"
+    },
+    "patientInfoUrl": {
+      "type": "string"
+    },
+    "patientInfoApiKeySecretName": {
+      "type": "string"
+    },
+    "patientInfoTimeout": {
+      "type": "string"
+    },
+    "keyVaultUrl": {
+      "type": "string"
+    },
+    "keyVaultCacheLifetime": {
+      "type": "string"
+    },
+    "poisonQueueBatchSize": {
+      "type": "string"
+    },
+    "authenticationTokenIssuer": {
+      "type": "string"
+    },
+    "authenticationTokenAudience": {
+      "type": "string"
+    },
+    "bookingProxyBaseUrl": {
+      "type": "string"
+    },
+    "bookingProxyTimeout": {
+      "type": "string"
+    },
+    "buildNumber": {
+      "type": "string"
+    },
+     "patientInfoForumUrl": {
+      "type": "string"
+    },
+    "patientInfoForumApiKeySecretName": {
+      "type": "string"
+    },
+    "patientInfoForumTimeout": {
+      "type": "string"
+    },
+    "queueMonitorSchedule": {
+      "type": "string"
+    },
+    "queueMetricName": {
+      "type": "string"
+    },
+    "ppqEndpoint": {
+      "type": "string"
+    },
+    "cohortServiceUrl": {
+      "type": "string"
+    },
+    "subnetId": {
+      "type":"string"
+    }
+  },
+  "variables": {
+    "isNew": "[bool(parameters('isNew'))]",
+    "defaultProperties": {
+      "serverFarmId": "[parameters('hostingPlanId')]",
+      "httpsOnly": true,
+      "siteConfig": {
+        "ipSecurityRestrictions": "[if(equals(parameters('subnetId'), ''), variables('ipSecurityRestrictionsDefaultSettings'), variables('ipSecurityRestrictionsSettings'))]"
+        }
+    },
+    "mainSlotPropertiesWithAppSettings": {
+      "serverFarmId": "[parameters('hostingPlanId')]",
+      "httpsOnly": true,
+      "siteConfig": {
+        "ipSecurityRestrictions": "[if(equals(parameters('subnetId'), ''), variables('ipSecurityRestrictionsDefaultSettings'), variables('ipSecurityRestrictionsSettings'))]",
+        "appSettings": "[union(variables('appSettings'), variables('mainSlotAppSettings'))]"
+      }
+    },
+    "stagingSlotPropertiesWithAppSettings": {
+      "serverFarmId": "[parameters('hostingPlanId')]",
+      "httpsOnly": true,
+      "siteConfig": {
+        "ipSecurityRestrictions": "[if(equals(parameters('subnetId'), ''), variables('ipSecurityRestrictionsDefaultSettings'), variables('ipSecurityRestrictionsSettings'))]",
+        "appSettings": "[union(variables('appSettings'), variables('stagingSlotAppSettings'))]"
+      }
+    },
+    "ipSecurityRestrictionsSettings": [
+      {
+        "vnetSubnetResourceId": "[parameters('subnetId')]",
+        "action": "Allow",
+        "tag": "Default",
+        "priority": 100,
+        "name": "Vnet Rule",
+        "description": "Restrict request through subnet"
+      },
+      {
+         "ipAddress": "AzureEventGrid",
+         "action": "Allow",
+         "tag": "ServiceTag",
+         "priority": 100,
+         "name":"Azure Event Grid"
+      },      
+      {
+         "ipAddress": "Eventhub",
+         "action": "Allow",
+         "tag": "ServiceTag",
+         "priority": 100,
+         "name":"Azure Event Hub"
+      }
+    ],
+    "ipSecurityRestrictionsDefaultSettings": [
+      {
+          "ipAddress": "Any",
+          "action": "Allow",
+          "priority": 1,
+          "name": "Allow all",
+          "description": "Allow all access"
+      }
+    ],
+    "mainSlotAppSettings": [
+      {
+        "name": "IsPrimarySlot",
+        "value": "[bool('true')]"
+      },
+      {
+        "name": "AzureWebJobs.ExponeaEvents.Disabled",
+        "value": "false"
+      },
+      {
+        "name": "AzureWebJobs.ExponeaCustomerEvents.Disabled",
+        "value": "false"
+      },
+      {
+        "name": "AzureWebJobs.ErrorQueueTrigger.Disabled",
+        "value": "false"
+      },
+      {
+        "name": "AzureWebJobs.CareProviderSyncFunction.Disabled",
+        "value": "false"
+      },
+      {
+        "name": "AzureWebJobs.ServiceSyncFunction.Disabled",
+        "value": "false"
+      },
+      {
+        "name": "AzureWebJobs.ErrorPoisonQueueMonitor.Disabled",
+        "value": "false"
+      }
+    ],
+    "stagingSlotAppSettings": [
+      {
+        "name": "IsPrimarySlot",
+        "value": "[bool('false')]"
+      },
+      {
+        "name": "AzureWebJobs.ExponeaEvents.Disabled",
+        "value": "true"
+      },
+      {
+        "name": "AzureWebJobs.ExponeaCustomerEvents.Disabled",
+        "value": "true"
+      },
+      {
+        "name": "AzureWebJobs.ErrorQueueTrigger.Disabled",
+        "value": "true"
+      },
+      {
+        "name": "AzureWebJobs.CareProviderSyncFunction.Disabled",
+        "value": "true"
+      },
+      {
+        "name": "AzureWebJobs.ServiceSyncFunction.Disabled",
+        "value": "true"
+      },
+      {
+        "name": "AzureWebJobs.ErrorPoisonQueueMonitor.Disabled",
+        "value": "true"
+      }
+    ],
+    "appSettings": [
+      {
+        "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+        "value": "[parameters('applicationInsightsInstrumentationKey')]"
+      },
+      {
+        "name": "AzureWebJobsStorage",
+        "value": "[parameters('storageAccountConnectionString')]"
+      },
+      {
+        "name": "FUNCTIONS_EXTENSION_VERSION",
+        "value": "~3"
+      },
+      {
+        "name": "WEBSITE_RUN_FROM_PACKAGE",
+        "value": "1"
+      },
+      {
+        "name": "FUNCTIONS_WORKER_RUNTIME",
+        "value": "dotnet"
+      },
+      {
+        "name": "ExponeaBaseUrl",
+        "value": "[parameters('exponeaBaseUrl')]"
+      },
+      {
+        "name": "ExponeaUsername",
+        "value": "[parameters('exponeaUsername')]"
+      },
+      {
+        "name": "ExponeaPasswordSecretName",
+        "value": "[parameters('exponeaPasswordSecretName')]"
+      },
+      {
+        "name": "ExponeaProjectId",
+        "value": "[parameters('exponeaProjectId')]"
+      },
+      {
+        "name": "ExponeaApiVersion",
+        "value": "[parameters('exponeaApiVersion')]"
+      },
+      {
+        "name": "ExponeaCareProviderCatalogueId",
+        "value": "[parameters('exponeaCareProviderCatalogueId')]"
+      },
+      {
+        "name" : "ExponeaServiceCatalogueId",
+        "value" : "[parameters('exponeaServiceCatalogueId')]"
+      },
+      {
+        "name" : "ExponeaArticleCatalogueId",
+        "value" : "[parameters('exponeaArticleCatalogueId')]"
+      },
+      {
+        "name" : "ServiceBusConnectionString",
+        "value" : "[parameters('serviceBusConnectionString')]"
+      },
+      {
+        "name": "EventHubConnectionString",
+        "value": "[parameters('eventHubConnectionString')]"
+      },
+      {
+        "name": "CustomerEventHubName",
+        "value": "[parameters('customerEventHubName')]"
+      },
+      {
+        "name": "EventEventHubName",
+        "value": "[parameters('eventEventHubName')]"
+      },
+      {
+        "name": "IamUrl",
+        "value": "[parameters('iamUrl')]"
+      },
+      {
+        "name": "DisableTestFunctions",
+        "value": "[bool(parameters('disableTestFunctions'))]"
+      },
+      {
+        "name": "MaxBatchSize",
+        "value": "[int(parameters('maxBatchSize'))]"
+      },
+      {
+        "name": "SsoTokenUrl",
+        "value": "[parameters('ssoTokenUrl')]"
+      },
+      {
+        "name": "SsoClientId",
+        "value": "[parameters('ssoClientId')]"
+      },
+      {
+        "name": "SsoClientSecret",
+        "value": "[parameters('ssoClientSecret')]"
+      },
+      {
+        "name": "SsoScope",
+        "value": "[parameters('ssoScope')]"
+      },
+      {
+        "name": "ErrorQueueName",
+        "value": "[parameters('errorQueueName')]"
+      },
+      {
+        "name": "ErrorPoisonQueueName",
+        "value": "[concat(parameters('errorQueueName'), '-poison')]"
+      },
+      {
+        "name": "RetryDelay1",
+        "value": "[parameters('retryDelay1')]"
+      },
+      {
+        "name": "RetryDelay2",
+        "value": "[parameters('retryDelay2')]"
+      },
+      {
+        "name": "RetryDelay3",
+        "value": "[parameters('retryDelay3')]"
+      },
+      {
+        "name": "DirectoryBaseUrl",
+        "value": "[parameters('directoryBaseUrl')]"
+      },
+      {
+        "name": "DirectoryProfile",
+        "value": "[parameters('directoryProfile')]"
+      },
+      {
+        "name": "DirectoryView",
+        "value": "[parameters('directoryView')]"
+      },
+      {
+        "name": "DirectoryCareProviderEndpoint",
+        "value": "[parameters('directoryCareProviderEndpoint')]"
+      },
+      {
+        "name": "DirectoryServiceEndpoint",
+        "value": "[parameters('directoryServiceEndpoint')]"
+      },
+      {
+        "name": "DirectoryTopic",
+        "value": "[parameters('directoryTopic')]"
+      },
+      {
+        "name": "DirectoryCareProviderUpdateSubscription",
+        "value": "[parameters('directoryCareProviderUpdateSubscription')]"
+      },
+      {
+        "name": "DirectoryServiceUpdateSubscription",
+        "value": "[parameters('directoryServiceUpdateSubscription')]"
+      },
+      {
+        "name": "PatientInfoUrl",
+        "value": "[parameters('patientInfoUrl')]"
+      },
+      {
+        "name": "PatientInfoApiKeySecretName",
+        "value": "[parameters('patientInfoApiKeySecretName')]"
+      },
+      {
+        "name": "PatientInfoTimeout",
+        "value": "[parameters('patientInfoTimeout')]"
+      },
+      {
+        "name": "KeyVaultUrl",
+        "value": "[parameters('keyVaultUrl')]"
+      },
+      {
+        "name": "KeyVaultCacheLifetime",
+        "value": "[parameters('keyVaultCacheLifetime')]"
+      },
+      {
+        "name": "QueueStorageConnectionString",
+        "value": "[parameters('storageAccountConnectionString')]"
+      },
+      {
+        "name": "PoisonQueueBatchSize",
+        "value": "[int(parameters('poisonQueueBatchSize'))]"
+      },
+      {
+        "name": "AuthenticationTokenIssuer",
+        "value": "[parameters('authenticationTokenIssuer')]"
+      },
+      {
+        "name": "AuthenticationTokenAudience",
+        "value": "[parameters('authenticationTokenAudience')]"
+      },
+      {
+        "name": "BookingProxyBaseUrl",
+        "value": "[parameters('bookingProxyBaseUrl')]"
+      },
+      {
+        "name": "BookingProxyTimeout",
+        "value": "[parameters('bookingProxyTimeout')]"
+      },
+      {
+        "name": "BuildNumber",
+        "value": "[parameters('buildNumber')]"
+      },
+      {
+        "name": "PatientInfoForumUrl",
+        "value": "[parameters('patientInfoForumUrl')]"
+      },
+      {
+        "name": "PatientInfoForumApiKeySecretName",
+        "value": "[parameters('patientInfoForumApiKeySecretName')]"
+      },
+      {
+        "name": "PatientInfoForumTimeout",
+        "value": "[parameters('patientInfoForumTimeout')]"
+      },
+      {
+        "name": "PoisonQueueMonitorSchedule",
+        "value": "[parameters('queueMonitorSchedule')]"
+      },
+      {
+        "name": "PoisonQueueMetricName",
+        "value": "[parameters('queueMetricName')]"
+      },
+      {
+        "name": "PPQEndpoint",
+        "value": "[parameters('ppqEndpoint')]"
+      },
+      {
+        "name": "CohortServiceUrl",
+        "value": "[parameters('cohortServiceUrl')]"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[parameters('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "properties": "[if(variables('isNew'), variables('mainSlotPropertiesWithAppSettings'), variables('defaultProperties'))]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "resources": [
+        {
+          "name": "staging",
+          "type": "slots",
+          "apiVersion": "2018-02-01",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('functionAppName'))]"
+          ],
+          "properties": "[variables('stagingSlotPropertiesWithAppSettings')]",
+          "identity": {
+            "type": "SystemAssigned"
+          }
+        },
+        {
+          "name": "slotConfigNames",
+          "type": "config",
+          "apiVersion": "2018-02-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+          ],
+          "properties": {
+            "appSettingNames": [
+              "IsPrimarySlot",
+              "AzureWebJobs.ExponeaEvents.Disabled",
+              "AzureWebJobs.ExponeaCustomerEvents.Disabled"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "stagingSlotDefaultHostName": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites/slots', parameters('functionAppName'), 'staging')).DefaultHostName]"
+    },
+    "functionAppResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+    },
+    "functionAppName": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName'))).Name]"
+    }
+  }
+}
+DEPLOY
+
+  # these key-value pairs are passed into the ARM Template's `parameters` block
+  parameters = {
+    "isNew"                                   = "${var.is_new}"
+    "functionAppName"                         = "${var.prefix}-${var.instance}-app"
+    "applicationInsightsInstrumentationKey"   = "${azurerm_application_insights.insights.instrumentation_key}"
+    "hostingPlanId"                           = "${var.app_service_plan_id == "" ? azurerm_app_service_plan.plan[0].id : var.app_service_plan_id}"
+    "storageAccountConnectionString"          = "${azurerm_storage_account.storage.primary_connection_string}"
+    "location"                                = "${var.location}"
+    "exponeaBaseUrl"                          = "${var.exponea_base_url}"
+    "exponeaUsername"                         = "${var.exponea_username}"
+    "exponeaPasswordSecretName"               = "${var.exponea_password_secret_name}"
+    "exponeaProjectId"                        = "${var.exponea_project_id}"
+    "exponeaApiVersion"                       = "${var.exponea_api_version}"
+    "eventHubConnectionString"                = "${azurerm_eventhub_namespace.exponea_eventhub.default_primary_connection_string}"
+    "customerEventHubName"                    = "${azurerm_eventhub.eventhub_exponea_customerupdate.name}"
+    "eventEventHubName"                       = "${azurerm_eventhub.eventhub_exponea_event.name}"
+    "iamUrl"                                  = "${var.iam_url}"
+    "disableTestFunctions"                    = "${var.disable_test_functions}"
+    "maxBatchSize"                            = "${var.max_batch_size}"
+    "ssoTokenUrl"                             = "${var.sso_token_url}"
+    "ssoClientId"                             = "${var.sso_client_id}"
+    "ssoClientSecret"                         = "${var.sso_client_secret}"
+    "ssoScope"                                = "${var.sso_scope}"
+    "errorQueueName"                          = "${var.error_queue_name}"
+    "retryDelay1"                             = "${var.retry_delay_1}"
+    "retryDelay2"                             = "${var.retry_delay_2}"
+    "retryDelay3"                             = "${var.retry_delay_3}"
+    "patientInfoUrl"                          = "${var.patient_info_url}"
+    "patientInfoApiKeySecretName"             = "${var.patient_info_api_key_secret_name}"
+    "patientInfoTimeout"                      = "${var.patient_info_timeout}"
+    "keyVaultUrl"                             = "${var.key_vault_url}"
+    "keyVaultCacheLifetime"                   = "${var.key_vault_cache_lifetime}"
+    "directoryBaseUrl"                        = "${var.directory_baseurl}"
+    "directoryProfile"                        = "${var.directory_profile}"
+    "directoryView"                           = "${var.directory_view}"
+    "directoryCareProviderEndpoint"           = "${var.directory_careprovider_endpoint}"
+    "directoryServiceEndpoint"                = "${var.directory_service_endpoint}"
+    "serviceBusConnectionString"              = "${var.servicebus_connection_string}"
+    "directoryTopic"                          = "${var.servicebus_directory_topic}"
+    "directoryCareProviderUpdateSubscription" = "${var.servicebus_careprovider_update_subs}"
+    "directoryServiceUpdateSubscription"      = "${var.servicebus_service_update_subs}"
+    "exponeaCareProviderCatalogueId"          = "${var.exponea_careprovider_catalogue_id}"
+    "exponeaServiceCatalogueId"               = "${var.exponea_service_catalogue_id}"
+    "exponeaArticleCatalogueId"               = "${var.exponea_article_catalogue_id}"
+    "poisonQueueBatchSize"                    = "${var.poison_queue_batch_size}"
+    "authenticationTokenIssuer"               = "${var.authentication_token_issuer}"
+    "authenticationTokenAudience"             = "${var.authentication_token_audience}"
+    "bookingProxyBaseUrl"                     = "${var.booking_proxy_base_url}"
+    "bookingProxyTimeout"                     = "${var.booking_proxy_timeout}"
+    "buildNumber"                             = "${var.build_number}"
+    "patientInfoForumUrl"                     = "${var.patient_info_forum_url}"
+    "patientInfoForumApiKeySecretName"        = "${var.patient_info_forum_api_key_secret_name}"
+    "patientInfoForumTimeout"                 = "${var.patient_info_forum_timeout}"
+    "queueMonitorSchedule"                    = "${var.queue_monitor_schedule}"
+    "queueMetricName"                         = "${var.queue_metric_name}"
+    "ppqEndpoint"                             = "${var.ppq_endpoint_url}"
+    "cohortServiceUrl"                        = "${var.cohort_service_url}",
+    "subnetId"                                = "${var.subnet_name != "" ? data.azurerm_subnet.subnet[0].id : ""}"
+  }
+
+  deployment_mode = "Incremental"
+}
+
+resource "azurerm_monitor_metric_alert" "cpu_percentage_alert" {
+  count               = var.app_service_plan_id == "" ? 1 : 0
+  name                = "${var.prefix}-${var.instance}-alert-cpu"
+  resource_group_name = azurerm_resource_group.group.name
+  scopes              = ["${azurerm_app_service_plan.plan[0].id}"]
+  description         = "Action will be triggered when CPU usage is greater than ${var.alerts_cpu_percentage_threshold}"
+
+  criteria {
+    metric_namespace = "Microsoft.Web/serverfarms"
+    metric_name      = "CpuPercentage"
+    aggregation      = "Average"
+    operator         = "GreaterThan"
+    threshold        = var.alerts_cpu_percentage_threshold
+  }
+
+  action {
+    action_group_id = var.alerts_action_group_id
+    webhook_properties = {
+      text = "${azurerm_app_service_plan.plan[0].name} CPU usage is above ${var.alerts_cpu_percentage_threshold}%"
+    }
+  }
+}
+
+resource "azurerm_monitor_metric_alert" "memory_percentage_alert" {
+  count               = var.app_service_plan_id == "" ? 1 : 0
+  name                = "${var.prefix}-${var.instance}-alert-memory"
+  resource_group_name = azurerm_resource_group.group.name
+  scopes              = ["${azurerm_app_service_plan.plan[0].id}"]
+  description         = "Action will be triggered when memory usage is greater than ${var.alerts_memory_percentage_threshold}"
+
+  criteria {
+    metric_namespace = "Microsoft.Web/serverfarms"
+    metric_name      = "MemoryPercentage"
+    aggregation      = "Average"
+    operator         = "GreaterThan"
+    threshold        = var.alerts_memory_percentage_threshold
+  }
+
+  action {
+    action_group_id = var.alerts_action_group_id
+    webhook_properties = {
+      text = "${azurerm_app_service_plan.plan[0].name} memory usage is above ${var.alerts_memory_percentage_threshold}%"
+    }
+  }
+}
+
+resource "azurerm_monitor_metric_alert" "server_errors_alert" {
+  name                = "${var.prefix}-${var.instance}-alert-servererrors"
+  resource_group_name = azurerm_resource_group.group.name
+
+  # default value due to https://github.com/terraform-providers/terraform-provider-azurerm/issues/2836
+  scopes      = ["${lookup(azurerm_template_deployment.functions.outputs, "functionAppResourceId", "$/subscriptions/{data.azurerm_subscription.current.subscription_id}/resourceGroups/{azurerm_resource_group.group.name}/providers/Microsoft.Web/sites/{var.prefix}-${var.instance}-api")}"]
+  description = "Action will be triggered when HTTP 5XX error count is greater than ${var.alerts_server_error_threshold}"
+
+  criteria {
+    metric_namespace = "Microsoft.Web/sites"
+    metric_name      = "Http5xx"
+    aggregation      = "Total"
+    operator         = "GreaterThan"
+    threshold        = var.alerts_server_error_threshold
+  }
+
+  action {
+    action_group_id = var.alerts_action_group_id
+    webhook_properties = {
+      text = "${lookup(azurerm_template_deployment.functions.outputs, "functionAppName", "")} has experienced over ${var.alerts_server_error_threshold} HTTP server errors"
+    }
+  }
+}
+
+resource "azurerm_template_deployment" "queue_alert" {
+  name                = "queue-count-alert-deployment"
+  resource_group_name = azurerm_resource_group.group.name
+
+  template_body = <<DEPLOY
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "queueCountAlertName": {
+            "type": "String"
+        },
+        "applicationInsightsId": {
+            "type": "String"
+        },
+        "actionGroupId": {
+            "type": "String"
+        },
+        "metricName": {
+            "type": "String"
+        },
+        "evaluationFrequency": {
+            "type": "String"
+        },
+        "windowSize": {
+            "type": "String"
+        },
+        "storageAccountName": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "microsoft.insights/metricAlerts",
+            "apiVersion": "2018-03-01",
+            "name": "[parameters('queueCountAlertName')]",
+            "location": "global",
+            "properties": {
+                "description": "Alert to indicate that the errors poison queue is not empty",
+                "severity": 3,
+                "enabled": true,
+                "scopes": [
+                    "[parameters('applicationInsightsId')]"
+                ],
+                "evaluationFrequency": "[parameters('evaluationFrequency')]",
+                "windowSize": "[parameters('windowSize')]",
+                "criteria": {
+                    "allOf": [
+                        {
+                            "threshold": 0,
+                            "name": "Metric1",
+                            "metricNamespace": "Azure.ApplicationInsights",
+                            "metricName": "[parameters('metricName')]",
+                            "dimensions": [],
+                            "operator": "GreaterThan",
+                            "timeAggregation": "Maximum",
+                            "criterionType": "StaticThresholdCriterion",
+                            "skipMetricValidation": true
+                        }
+                    ],
+                    "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                },
+                "autoMitigate": true,
+                "targetResourceType": "microsoft.insights/components",
+                "targetResourceRegion": "uksouth",
+                "actions": [
+                    {
+                        "actionGroupId": "[parameters('actionGroupId')]",
+                        "webHookProperties": {
+                            "text": "[concat(parameters('storageAccountName'), ' errors poison queue is not empty')]"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+DEPLOY
+
+  # these key-value pairs are passed into the ARM Template's `parameters` block
+  parameters = {
+    "queueCountAlertName" : "${var.prefix}-${var.instance}-alert-queue-count"
+    "applicationInsightsId" : "${azurerm_application_insights.insights.id}"
+    "actionGroupId" : "${var.alerts_action_group_id}"
+    "metricName" : "${var.queue_metric_name}"
+    "evaluationFrequency" : "${var.queue_alert_evaluation_frequency}"
+    "windowSize" : "${var.queue_alert_window_size}"
+    "storageAccountName" : "${azurerm_storage_account.storage.name}"
+  }
+
+  deployment_mode = "Incremental"
+}
+
+
+output "function_app_name" {
+  value = lookup(azurerm_template_deployment.functions.outputs, "functionAppName", "")
+}
