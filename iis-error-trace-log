@@ -1,7 +1,7 @@
 
 No.     EventName                                       Details                                                 Time
 
-1. GENERAL_REQUEST_START SiteId="7", AppPoolId="site-app-pool-id", ConnId="1610613262", RawConnId="0", RequestURL="http://{{ip-address}}:82/", RequestVerb="GET" 13:49:43.033 
+1. GENERAL_REQUEST_START SiteId="7", AppPoolId="site-app-pool-id", ConnId="1610613262", RawConnId="0", RequestURL="http://{{ip-address}}:{{site-port}}/", RequestVerb="GET" 13:49:43.033 
 2. PRE_BEGIN_REQUEST_START ModuleName="DynamicIpRestrictionModule" 13:49:43.049 
 3. PRE_BEGIN_REQUEST_END ModuleName="DynamicIpRestrictionModule", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
 4. PRE_BEGIN_REQUEST_START ModuleName="FailedRequestsTracingModule" 13:49:43.049 
@@ -16,14 +16,14 @@ No.     EventName                                       Details                 
 13. FILTER_END NotificationStatus="SF_STATUS_REQ_NEXT_NOTIFICATION" 13:49:43.049 
 14. FILTER_PREPROC_HEADERS_END  13:49:43.049 
 15. PRE_BEGIN_REQUEST_END ModuleName="IsapiFilterModule", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
-16. GENERAL_ENDPOINT_INFORMATION RemoteAddress="53.244.194.30", RemotePort="46089", LocalAddress="53.71.89.62", LocalPort="82" 13:49:43.049 
+16. GENERAL_ENDPOINT_INFORMATION RemoteAddress="{{remote-ip-address}}", RemotePort="{{port}}", LocalAddress="{{VM ip address}}", LocalPort="{{site-port}}" 13:49:43.049 
 17. GENERAL_REQUEST_HEADERS Headers="Cache-Control: max-age=0
 Connection: keep-alive
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 Accept-Encoding: gzip
 Accept-Language: en-US,en;q=0.9
 Cookie: lastSearch=&vendor=&status=Release&mandant=&tireKey=&profileDesc=&tireWidth=&tireHeight=&tireDiameter=&schlauch=&lastIndexSingle=&lastIndexTwice=&velocityIndex=&releaseDateFrom=&releaseDateTo=&tireSegment=&tirePosition=; ASP.NET_SessionId=y4p51whyesgzrlrjwwu31mti
-Host: 53.71.89.62:82
+Host: {{ip-adress}}:{{site-port}}
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.41
 Upgrade-Insecure-Requests: 1
 X-IMForwards: 20
