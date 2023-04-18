@@ -1,0 +1,295 @@
+
+No.     EventName                                       Details                                                 Time
+
+1. GENERAL_REQUEST_START SiteId="7", AppPoolId="site-app-pool-id", ConnId="1610613262", RawConnId="0", RequestURL="http://{{ip-address}}:82/", RequestVerb="GET" 13:49:43.033 
+2. PRE_BEGIN_REQUEST_START ModuleName="DynamicIpRestrictionModule" 13:49:43.049 
+3. PRE_BEGIN_REQUEST_END ModuleName="DynamicIpRestrictionModule", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+4. PRE_BEGIN_REQUEST_START ModuleName="FailedRequestsTracingModule" 13:49:43.049 
+5. PRE_BEGIN_REQUEST_END ModuleName="FailedRequestsTracingModule", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+6. PRE_BEGIN_REQUEST_START ModuleName="RequestMonitorModule" 13:49:43.049 
+7. PRE_BEGIN_REQUEST_END ModuleName="RequestMonitorModule", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+8. PRE_BEGIN_REQUEST_START ModuleName="IsapiFilterModule" 13:49:43.049 
+9. FILTER_PREPROC_HEADERS_START  13:49:43.049 
+10. FILTER_START FilterName="C:\windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_filter.dll" 13:49:43.049 
+11. GENERAL_SET_REQUEST_HEADER HeaderName="AspFilterSessionId", HeaderValue="", Replace="true" 13:49:43.049 
+12. FILTER_SET_REQ_HEADER HeaderName="AspFilterSessionId:", HeaderValue="" 13:49:43.049 
+13. FILTER_END NotificationStatus="SF_STATUS_REQ_NEXT_NOTIFICATION" 13:49:43.049 
+14. FILTER_PREPROC_HEADERS_END  13:49:43.049 
+15. PRE_BEGIN_REQUEST_END ModuleName="IsapiFilterModule", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+16. GENERAL_ENDPOINT_INFORMATION RemoteAddress="53.244.194.30", RemotePort="46089", LocalAddress="53.71.89.62", LocalPort="82" 13:49:43.049 
+17. GENERAL_REQUEST_HEADERS Headers="Cache-Control: max-age=0
+Connection: keep-alive
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding: gzip
+Accept-Language: en-US,en;q=0.9
+Cookie: lastSearch=&vendor=&status=Release&mandant=&tireKey=&profileDesc=&tireWidth=&tireHeight=&tireDiameter=&schlauch=&lastIndexSingle=&lastIndexTwice=&velocityIndex=&releaseDateFrom=&releaseDateTo=&tireSegment=&tirePosition=; ASP.NET_SessionId=y4p51whyesgzrlrjwwu31mti
+Host: 53.71.89.62:82
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.41
+Upgrade-Insecure-Requests: 1
+X-IMForwards: 20
+" 13:49:43.049 
+18. URL_CACHE_ACCESS_START RequestURL="/" 13:49:43.049 
+19. URL_CACHE_ACCESS_END PhysicalPath="", URLInfoFromCache="false", URLInfoAddedToCache="true", ErrorCode="The operation completed successfully.
+ (0x0)" 13:49:43.049 
+20. HANDLER_PRECONDITION_NOT_MATCH Name="ASPxReportDesignerHandlerModule", Precondition="integratedMode" 13:49:43.049 
+21. HANDLER_PRECONDITION_NOT_MATCH Name="ASPxWebDocumentViewerHandlerModule", Precondition="integratedMode" 13:49:43.049 
+22. HANDLER_PRECONDITION_NOT_MATCH Name="ASPxQueryBuilderDesignerHandlerModule", Precondition="integratedMode" 13:49:43.049 
+23. HANDLER_PRECONDITION_NOT_MATCH Name="ASPxHttpHandlerModule", Precondition="integratedMode" 13:49:43.049 
+24. HANDLER_PRECONDITION_NOT_MATCH Name="ASPxUploadProgressHandler", Precondition="integratedMode" 13:49:43.049 
+25. HANDLER_PRECONDITION_NOT_MATCH Name="rules-64-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+26. HANDLER_PRECONDITION_NOT_MATCH Name="rules-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+27. HANDLER_PRECONDITION_NOT_MATCH Name="rules-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+28. HANDLER_PRECONDITION_NOT_MATCH Name="xoml-64-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+29. HANDLER_PRECONDITION_NOT_MATCH Name="xoml-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+30. HANDLER_PRECONDITION_NOT_MATCH Name="xoml-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+31. HANDLER_PRECONDITION_NOT_MATCH Name="svc-ISAPI-2.0-64", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+32. HANDLER_PRECONDITION_NOT_MATCH Name="svc-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+33. HANDLER_PRECONDITION_NOT_MATCH Name="svc-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+34. HANDLER_PRECONDITION_NOT_MATCH Name="xamlx-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+35. HANDLER_PRECONDITION_NOT_MATCH Name="xamlx-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+36. HANDLER_PRECONDITION_NOT_MATCH Name="rules-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+37. HANDLER_PRECONDITION_NOT_MATCH Name="rules-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+38. HANDLER_PRECONDITION_NOT_MATCH Name="xoml-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+39. HANDLER_PRECONDITION_NOT_MATCH Name="xoml-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+40. HANDLER_PRECONDITION_NOT_MATCH Name="svc-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+41. HANDLER_PRECONDITION_NOT_MATCH Name="svc-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+42. HANDLER_PRECONDITION_NOT_MATCH Name="TraceHandler-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+43. HANDLER_PRECONDITION_NOT_MATCH Name="WebAdminHandler-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+44. HANDLER_PRECONDITION_NOT_MATCH Name="AssemblyResourceLoader-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+45. HANDLER_PRECONDITION_NOT_MATCH Name="PageHandlerFactory-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+46. HANDLER_PRECONDITION_NOT_MATCH Name="SimpleHandlerFactory-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+47. HANDLER_PRECONDITION_NOT_MATCH Name="WebServiceHandlerFactory-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+48. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-rem-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+49. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-soap-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+50. HANDLER_PRECONDITION_NOT_MATCH Name="aspq-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+51. HANDLER_PRECONDITION_NOT_MATCH Name="cshtm-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+52. HANDLER_PRECONDITION_NOT_MATCH Name="cshtml-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+53. HANDLER_PRECONDITION_NOT_MATCH Name="vbhtm-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+54. HANDLER_PRECONDITION_NOT_MATCH Name="vbhtml-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+55. HANDLER_PRECONDITION_NOT_MATCH Name="ScriptHandlerFactoryAppServices-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+56. HANDLER_PRECONDITION_NOT_MATCH Name="ScriptResourceIntegrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+57. HANDLER_PRECONDITION_NOT_MATCH Name="AXD-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+58. HANDLER_PRECONDITION_NOT_MATCH Name="PageHandlerFactory-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+59. HANDLER_PRECONDITION_NOT_MATCH Name="SimpleHandlerFactory-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+60. HANDLER_PRECONDITION_NOT_MATCH Name="WebServiceHandlerFactory-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+61. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-rem-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+62. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-soap-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+63. HANDLER_PRECONDITION_NOT_MATCH Name="aspq-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+64. HANDLER_PRECONDITION_NOT_MATCH Name="cshtm-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+65. HANDLER_PRECONDITION_NOT_MATCH Name="cshtml-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+66. HANDLER_PRECONDITION_NOT_MATCH Name="vbhtm-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+67. HANDLER_PRECONDITION_NOT_MATCH Name="vbhtml-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+68. HANDLER_PRECONDITION_NOT_MATCH Name="TraceHandler-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+69. HANDLER_PRECONDITION_NOT_MATCH Name="WebAdminHandler-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+70. HANDLER_PRECONDITION_NOT_MATCH Name="AssemblyResourceLoader-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+71. HANDLER_PRECONDITION_NOT_MATCH Name="PageHandlerFactory-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+72. HANDLER_PRECONDITION_NOT_MATCH Name="SimpleHandlerFactory-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+73. HANDLER_PRECONDITION_NOT_MATCH Name="WebServiceHandlerFactory-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+74. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-rem-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+75. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-soap-Integrated", Precondition="integratedMode,runtimeVersionv2.0" 13:49:43.049 
+76. HANDLER_PRECONDITION_NOT_MATCH Name="AXD-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+77. HANDLER_PRECONDITION_NOT_MATCH Name="PageHandlerFactory-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+78. HANDLER_PRECONDITION_NOT_MATCH Name="SimpleHandlerFactory-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+79. HANDLER_PRECONDITION_NOT_MATCH Name="WebServiceHandlerFactory-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+80. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-rem-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+81. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-soap-ISAPI-2.0", Precondition="classicMode,runtimeVersionv2.0,bitness32" 13:49:43.049 
+82. HANDLER_PRECONDITION_NOT_MATCH Name="AXD-ISAPI-2.0-64", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+83. HANDLER_PRECONDITION_NOT_MATCH Name="PageHandlerFactory-ISAPI-2.0-64", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+84. HANDLER_PRECONDITION_NOT_MATCH Name="SimpleHandlerFactory-ISAPI-2.0-64", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+85. HANDLER_PRECONDITION_NOT_MATCH Name="WebServiceHandlerFactory-ISAPI-2.0-64", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+86. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-rem-ISAPI-2.0-64", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+87. HANDLER_PRECONDITION_NOT_MATCH Name="HttpRemotingHandlerFactory-soap-ISAPI-2.0-64", Precondition="classicMode,runtimeVersionv2.0,bitness64" 13:49:43.049 
+88. HANDLER_PRECONDITION_NOT_MATCH Name="ExtensionlessUrlHandler-ISAPI-4.0_32bit", Precondition="classicMode,runtimeVersionv4.0,bitness32" 13:49:43.049 
+89. HANDLER_PRECONDITION_NOT_MATCH Name="ExtensionlessUrlHandler-Integrated-4.0", Precondition="integratedMode,runtimeVersionv4.0" 13:49:43.049 
+90. GENERAL_GET_URL_METADATA PhysicalPath="", AccessPerms="513" 13:49:43.049 
+91. MODULE_PRECONDITION_NOT_MATCH Name="ServiceModel", Precondition="managedHandler,runtimeVersionv2.0" 13:49:43.049 
+92. HANDLER_CHANGED OldHandlerName="", NewHandlerName="ExtensionlessUrlHandler-ISAPI-4.0_64bit", NewHandlerModules="IsapiModule", NewHandlerScriptProcessor="C:\windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_isapi.dll", NewHandlerType="" 13:49:43.049 
+93. VIRTUAL_MODULE_UNRESOLVED Name="OutputCache", Type="System.Web.Caching.OutputCacheModule" 13:49:43.049 
+94. VIRTUAL_MODULE_UNRESOLVED Name="Session", Type="System.Web.SessionState.SessionStateModule" 13:49:43.049 
+95. VIRTUAL_MODULE_UNRESOLVED Name="WindowsAuthentication", Type="System.Web.Security.WindowsAuthenticationModule" 13:49:43.049 
+96. VIRTUAL_MODULE_UNRESOLVED Name="FormsAuthentication", Type="System.Web.Security.FormsAuthenticationModule" 13:49:43.049 
+97. VIRTUAL_MODULE_UNRESOLVED Name="DefaultAuthentication", Type="System.Web.Security.DefaultAuthenticationModule" 13:49:43.049 
+98. VIRTUAL_MODULE_UNRESOLVED Name="RoleManager", Type="System.Web.Security.RoleManagerModule" 13:49:43.049 
+99. VIRTUAL_MODULE_UNRESOLVED Name="UrlAuthorization", Type="System.Web.Security.UrlAuthorizationModule" 13:49:43.049 
+100. VIRTUAL_MODULE_UNRESOLVED Name="FileAuthorization", Type="System.Web.Security.FileAuthorizationModule" 13:49:43.049 
+101. VIRTUAL_MODULE_UNRESOLVED Name="AnonymousIdentification", Type="System.Web.Security.AnonymousIdentificationModule" 13:49:43.049 
+102. VIRTUAL_MODULE_UNRESOLVED Name="Profile", Type="System.Web.Profile.ProfileModule" 13:49:43.049 
+103. VIRTUAL_MODULE_UNRESOLVED Name="UrlMappingsModule", Type="System.Web.UrlMappingsModule" 13:49:43.049 
+104. VIRTUAL_MODULE_UNRESOLVED Name="ServiceModel-4.0", Type="System.ServiceModel.Activation.ServiceHttpModule, System.ServiceModel.Activation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" 13:49:43.049 
+105. VIRTUAL_MODULE_UNRESOLVED Name="UrlRoutingModule-4.0", Type="System.Web.Routing.UrlRoutingModule" 13:49:43.049 
+106. VIRTUAL_MODULE_UNRESOLVED Name="ScriptModule-4.0", Type="System.Web.Handlers.ScriptModule, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" 13:49:43.049 
+107. VIRTUAL_MODULE_UNRESOLVED Name="ASPxHttpHandlerModule", Type="DevExpress.Web.ASPxHttpHandlerModule, DevExpress.Web.v20.1, Version=20.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" 13:49:43.049 
+108. NOTIFY_MODULE_START ModuleName="HttpCacheModule", Notification="BEGIN_REQUEST", fIsPostNotification="false" 13:49:43.049 
+109. NOTIFY_MODULE_END ModuleName="HttpCacheModule", Notification="BEGIN_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+110. NOTIFY_MODULE_START ModuleName="IpRestrictionModule", Notification="BEGIN_REQUEST", fIsPostNotification="false" 13:49:43.049 
+111. NOTIFY_MODULE_END ModuleName="IpRestrictionModule", Notification="BEGIN_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+112. NOTIFY_MODULE_START ModuleName="RequestFilteringModule", Notification="BEGIN_REQUEST", fIsPostNotification="false" 13:49:43.049 
+113. NOTIFY_MODULE_END ModuleName="RequestFilteringModule", Notification="BEGIN_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+114. NOTIFY_MODULE_START ModuleName="FailedRequestsTracingModule", Notification="BEGIN_REQUEST", fIsPostNotification="false" 13:49:43.049 
+115. NOTIFY_MODULE_END ModuleName="FailedRequestsTracingModule", Notification="BEGIN_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+116. NOTIFY_MODULE_START ModuleName="IsapiFilterModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+117. NOTIFY_MODULE_END ModuleName="IsapiFilterModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+118. NOTIFY_MODULE_START ModuleName="CertificateMappingAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+119. AUTH_START AuthTypeSupported="MapCliCert" 13:49:43.049 
+120. AUTH_END  13:49:43.049 
+121. NOTIFY_MODULE_END ModuleName="CertificateMappingAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+122. NOTIFY_MODULE_START ModuleName="BasicAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+123. AUTH_START AuthTypeSupported="Basic" 13:49:43.049 
+124. AUTH_END  13:49:43.049 
+125. NOTIFY_MODULE_END ModuleName="BasicAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+126. NOTIFY_MODULE_START ModuleName="WindowsAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+127. AUTH_START AuthTypeSupported="NT" 13:49:43.049 
+128. AUTH_END  13:49:43.049 
+129. NOTIFY_MODULE_END ModuleName="WindowsAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+130. NOTIFY_MODULE_START ModuleName="DigestAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+131. AUTH_START AuthTypeSupported="Digest" 13:49:43.049 
+132. AUTH_END  13:49:43.049 
+133. NOTIFY_MODULE_END ModuleName="DigestAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+134. NOTIFY_MODULE_START ModuleName="IISCertificateMappingAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+135. AUTH_START AuthTypeSupported="MapCliCert" 13:49:43.049 
+136. AUTH_END  13:49:43.049 
+137. NOTIFY_MODULE_END ModuleName="IISCertificateMappingAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+138. NOTIFY_MODULE_START ModuleName="AnonymousAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+139. AUTH_START AuthTypeSupported="Anonymous" 13:49:43.049 
+140. AUTH_REQUEST_AUTH_TYPE RequestAuthType="Anonymous" 13:49:43.049 
+141. AUTH_SUCCEEDED AuthType="NT", NTLMUsed="false", RemoteUserName="", AuthUserName="", TokenImpersonationLevel="ImpersonationDelegate" 13:49:43.049 
+142. USER_SET AuthType="", UserName="", SupportsIsInRole="true" 13:49:43.049 
+143. AUTH_END  13:49:43.049 
+144. NOTIFY_MODULE_END ModuleName="AnonymousAuthenticationModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+145. NOTIFY_MODULE_START ModuleName="IsapiFilterModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotification="true" 13:49:43.049 
+146. FILTER_AUTH_COMPLETE_START  13:49:43.049 
+147. FILTER_AUTH_COMPLETE_END  13:49:43.049 
+148. NOTIFY_MODULE_END ModuleName="IsapiFilterModule", Notification="AUTHENTICATE_REQUEST", fIsPostNotificationEvent="true", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+149. NOTIFY_MODULE_START ModuleName="UrlAuthorizationModule", Notification="AUTHORIZE_REQUEST", fIsPostNotification="false" 13:49:43.049 
+150. NOTIFY_MODULE_END ModuleName="UrlAuthorizationModule", Notification="AUTHORIZE_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+151. NOTIFY_MODULE_START ModuleName="HttpCacheModule", Notification="RESOLVE_REQUEST_CACHE", fIsPostNotification="false" 13:49:43.049 
+152. OUTPUT_CACHE_LOOKUP_START  13:49:43.049 
+153. OUTPUT_CACHE_LOOKUP_END Result="NOT_FOUND" 13:49:43.049 
+154. NOTIFY_MODULE_END ModuleName="HttpCacheModule", Notification="RESOLVE_REQUEST_CACHE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+155. NOTIFY_MODULE_START ModuleName="StaticCompressionModule", Notification="MAP_REQUEST_HANDLER", fIsPostNotification="false" 13:49:43.049 
+156. NOTIFY_MODULE_END ModuleName="StaticCompressionModule", Notification="MAP_REQUEST_HANDLER", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+157. NOTIFY_MODULE_START ModuleName="HttpRedirectionModule", Notification="MAP_REQUEST_HANDLER", fIsPostNotification="false" 13:49:43.049 
+158. NOTIFY_MODULE_END ModuleName="HttpRedirectionModule", Notification="MAP_REQUEST_HANDLER", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:43.049 
+159. NOTIFY_MODULE_START ModuleName="IsapiModule", Notification="EXECUTE_REQUEST_HANDLER", fIsPostNotification="false" 13:49:43.049 
+160. GENERAL_ISAPI_HANDLER  13:49:43.065 
+161. ISAPI_START  13:49:43.065 
+162. MODULE_SET_RESPONSE_ERROR_STATUS
+
+Warning
+ ModuleName="IsapiModule", Notification="EXECUTE_REQUEST_HANDLER", HttpStatus="401", HttpReason="Unauthorized", HttpSubStatus="5", ErrorCode="The operation completed successfully.
+ (0x0)", ConfigExceptionInfo="" 13:49:57.033 
+163. GENERAL_SET_RESPONSE_HEADER HeaderName="X-AspNet-Version", HeaderValue="4.0.30319", Replace="false" 13:49:57.033 
+164. GENERAL_SET_RESPONSE_HEADER HeaderName="X-AspNetMvc-Version", HeaderValue="5.2", Replace="false" 13:49:57.033 
+165. GENERAL_SET_RESPONSE_HEADER HeaderName="Cache-Control", HeaderValue="private", Replace="false" 13:49:57.033 
+166. GENERAL_SET_RESPONSE_HEADER HeaderName="Content-Length", HeaderValue="0", Replace="false" 13:49:57.033 
+167. NOTIFY_MODULE_START ModuleName="HttpLoggingModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+168. NOTIFY_MODULE_END ModuleName="HttpLoggingModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+169. NOTIFY_MODULE_START ModuleName="IsapiModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+170. NOTIFY_MODULE_END ModuleName="IsapiModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+171. NOTIFY_MODULE_START ModuleName="DigestAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+172. NOTIFY_MODULE_END ModuleName="DigestAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+173. NOTIFY_MODULE_START ModuleName="WindowsAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+174. NOTIFY_MODULE_END ModuleName="WindowsAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+175. NOTIFY_MODULE_START ModuleName="BasicAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+176. NOTIFY_MODULE_END ModuleName="BasicAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+177. NOTIFY_MODULE_START ModuleName="ProtocolSupportModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+178. GENERAL_SET_RESPONSE_HEADER HeaderName="X-Powered-By", HeaderValue="ASP.NET", Replace="false" 13:49:57.033 
+179. NOTIFY_MODULE_END ModuleName="ProtocolSupportModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+180. NOTIFY_MODULE_START ModuleName="IsapiFilterModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+181. NOTIFY_MODULE_END ModuleName="IsapiFilterModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+182. NOTIFY_MODULE_START ModuleName="DynamicCompressionModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+183. DYNAMIC_COMPRESSION_START  13:49:57.033 
+184. DYNAMIC_COMPRESSION_NOT_SUCCESS Reason="NOT_SUCCESS_STATUS" 13:49:57.033 
+185. DYNAMIC_COMPRESSION_END  13:49:57.033 
+186. NOTIFY_MODULE_END ModuleName="DynamicCompressionModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+187. NOTIFY_MODULE_START ModuleName="HttpCacheModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+188. NOTIFY_MODULE_END ModuleName="HttpCacheModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+189. NOTIFY_MODULE_START ModuleName="CustomErrorModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+190. GENERAL_SEND_CUSTOM_ERROR HttpStatus="401", HttpSubStatus="5", FileNameOrURL="401.htm" 13:49:57.033 
+191. FILE_CACHE_ACCESS_START FileName="C:\inetpub\custerr\en-US\401.htm", UserName="{{user-id}}", DomainName="{{user-domain}}" 13:49:57.033 
+192. FILE_CACHE_CREATE_FILE FileName="C:\inetpub\custerr\en-US\401.htm", UserName="{{user-id}}", DomainName="{{user-domain}}" 13:49:57.033 
+193. FILE_CACHE_ACCESS_END Successful="true", FileFromCache="false", FileAddedToCache="true", FileDirmoned="true", LastModCheckErrorIgnored="true", ErrorCode="The operation completed successfully.
+ (0x0)", LastModifiedTime="Tue, 27 Sep 2016 07:38:21 GMT" 13:49:57.033 
+194. GENERAL_SET_RESPONSE_HEADER HeaderName="Content-Type", HeaderValue="text/html", Replace="true" 13:49:57.033 
+195. NOTIFY_MODULE_END ModuleName="CustomErrorModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+196. NOTIFY_MODULE_START ModuleName="DynamicIpRestrictionModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+197. NOTIFY_MODULE_END ModuleName="DynamicIpRestrictionModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+198. HTTPSYS_CACHEABLE HttpsysCacheable="false", Reason="RESPONSE_MORE_DATA", CachePolicy="NO_CACHE", TimeToLive="0" 13:49:57.033 
+199. GENERAL_FLUSH_RESPONSE_START  13:49:57.033 
+200. GENERAL_RESPONSE_HEADERS Headers="Cache-Control: private
+Transfer-Encoding: chunked
+Content-Type: text/html
+Server: Microsoft-IIS/8.5
+X-AspNet-Version: 4.0.30319
+X-AspNetMvc-Version: 5.2
+X-Powered-By: ASP.NET
+" 13:49:57.033 
+201. GENERAL_RESPONSE_ENTITY_BUFFER Buffer="50d
+" 13:49:57.033 
+202. GENERAL_RESPONSE_ENTITY_BUFFER Buffer="<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<title>401 - Unauthorized: Access is denied due to invalid credentials.</title>
+<style type="text/css">
+<!--
+body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}
+fieldset{padding:0 15px 10px 15px;} 
+h1{font-size:2.4em;margin:0;color:#FFF;}
+h2{font-size:1.7em;margin:0;color:#CC0000;} 
+h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} 
+#header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:"trebuchet MS", Verdana, sans-serif;color:#FFF;
+background-color:#555555;}
+#content{margin:0 0 0 2%;position:relative;}
+.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}
+-->
+</style>
+</head>
+<body>
+<div id="header"><h1>Server Error</h1></div>
+<div id="content">
+ <div class="content-container"><fieldset>
+  <h2>401 - Unauthorized: Access is denied due to invalid credentials.</h2>
+  <h3>You do not have permission to view this directory or page using the credentials that you supplied.</h3>
+ </fieldset></div>
+</div>
+</body>
+</html>
+" 13:49:57.033 
+203. GENERAL_RESPONSE_ENTITY_BUFFER Buffer="
+" 13:49:57.033 
+204. GENERAL_FLUSH_RESPONSE_END BytesSent="1548", ErrorCode="The operation completed successfully.
+ (0x0)" 13:49:57.033 
+205. ISAPI_END  13:49:57.033 
+206. NOTIFY_MODULE_END ModuleName="IsapiModule", Notification="EXECUTE_REQUEST_HANDLER", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+207. NOTIFY_MODULE_START ModuleName="DynamicCompressionModule", Notification="RELEASE_REQUEST_STATE", fIsPostNotification="true" 13:49:57.033 
+208. NOTIFY_MODULE_END ModuleName="DynamicCompressionModule", Notification="RELEASE_REQUEST_STATE", fIsPostNotificationEvent="true", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+209. NOTIFY_MODULE_START ModuleName="HttpCacheModule", Notification="UPDATE_REQUEST_CACHE", fIsPostNotification="false" 13:49:57.033 
+210. OUTPUT_CACHE_UPDATE_START CachePolicy="NO_CACHE", TimeToLive="0" 13:49:57.033 
+211. OUTPUT_CACHE_UPDATE_END Result="HEADERS_FLUSHED" 13:49:57.033 
+212. NOTIFY_MODULE_END ModuleName="HttpCacheModule", Notification="UPDATE_REQUEST_CACHE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+213. NOTIFY_MODULE_START ModuleName="CustomLoggingModule", Notification="LOG_REQUEST", fIsPostNotification="false" 13:49:57.033 
+214. NOTIFY_MODULE_END ModuleName="CustomLoggingModule", Notification="LOG_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+215. NOTIFY_MODULE_START ModuleName="DynamicIpRestrictionModule", Notification="END_REQUEST", fIsPostNotification="false" 13:49:57.033 
+216. NOTIFY_MODULE_END ModuleName="DynamicIpRestrictionModule", Notification="END_REQUEST", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+217. NOTIFY_MODULE_START ModuleName="HttpLoggingModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+218. NOTIFY_MODULE_END ModuleName="HttpLoggingModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+219. NOTIFY_MODULE_START ModuleName="IsapiModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+220. NOTIFY_MODULE_END ModuleName="IsapiModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+221. NOTIFY_MODULE_START ModuleName="BasicAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+222. NOTIFY_MODULE_END ModuleName="BasicAuthenticationModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+223. NOTIFY_MODULE_START ModuleName="IsapiFilterModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+224. NOTIFY_MODULE_END ModuleName="IsapiFilterModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+225. NOTIFY_MODULE_START ModuleName="DynamicCompressionModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+226. NOTIFY_MODULE_END ModuleName="DynamicCompressionModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+227. NOTIFY_MODULE_START ModuleName="CustomErrorModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+228. NOTIFY_MODULE_END ModuleName="CustomErrorModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+229. NOTIFY_MODULE_START ModuleName="DynamicIpRestrictionModule", Notification="SEND_RESPONSE", fIsPostNotification="false" 13:49:57.033 
+230. NOTIFY_MODULE_END ModuleName="DynamicIpRestrictionModule", Notification="SEND_RESPONSE", fIsPostNotificationEvent="false", NotificationStatus="NOTIFICATION_CONTINUE" 13:49:57.033 
+231. GENERAL_FLUSH_RESPONSE_START  13:49:57.033 
+232. GENERAL_RESPONSE_ENTITY_BUFFER Buffer="0
+
+" 13:49:57.033 
+233. GENERAL_FLUSH_RESPONSE_END BytesSent="5", ErrorCode="The operation completed successfully.
+ (0x0)" 13:49:57.033 
+234. GENERAL_REQUEST_END BytesSent="1553", BytesReceived="744", HttpStatus="401", HttpSubStatus="5" 13:49:57.033 
